@@ -9,6 +9,13 @@ const jsonFormat = `"` + Format + `"`
 
 type Time time.Time
 
+// New constructs a new iso8601.Time instance from an existing time.Time
+// instance.  This causes the nanosecond field to be set to 0, and its time
+// zone set to UTC (without adjusting based on time zone offset).
+func New(t time.Time) Time {
+	return Time(time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second(), 0, time.UTC))
+}
+
 func (it Time) MarshalJSON() ([]byte, error) {
 	return []byte(time.Time(it).Format(jsonFormat)), nil
 }
