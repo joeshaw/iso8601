@@ -29,7 +29,7 @@ func main() {
 
 	// Output after decoding back to go.  Note the loss of
 	// precision and time zone info.
-	// 2014-03-25 16:15:25 +0000 UTC
+	// 2014-03-25 16:15:25 +0000 +0000
 	var t2 iso8601.Time
 	json.Unmarshal(data, &t2)
 	fmt.Println(t2)

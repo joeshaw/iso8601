@@ -7,13 +7,25 @@ import "time"
 const Format = "2006-01-02T15:04:05"
 const jsonFormat = `"` + Format + `"`
 
+var fixedZone = time.FixedZone("", 0)
+
 type Time time.Time
 
-// New constructs a new iso8601.Time instance from an existing time.Time
-// instance.  This causes the nanosecond field to be set to 0, and its time
-// zone set to UTC (without adjusting based on time zone offset).
+// New constructs a new iso8601.Time instance from an existing
+// time.Time instance.  This causes the nanosecond field to be set to
+// 0, and its time zone set to a fixed zone with no offset from UTC
+// (but it is *not* UTC itself).
 func New(t time.Time) Time {
-	return Time(time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second(), 0, time.UTC))
+	return Time(time.Date(
+		t.Year(),
+		t.Month(),
+		t.Day(),
+		t.Hour(),
+		t.Minute(),
+		t.Second(),
+		0,
+		fixedZone,
+	))
 }
 
 func (it Time) MarshalJSON() ([]byte, error) {
@@ -21,7 +33,7 @@ func (it Time) MarshalJSON() ([]byte, error) {
 }
 
 func (it *Time) UnmarshalJSON(data []byte) error {
-	t, err := time.Parse(jsonFormat, string(data))
+	t, err := time.ParseInLocation(jsonFormat, string(data), fixedZone)
 	if err == nil {
 		*it = Time(t)
 	}
